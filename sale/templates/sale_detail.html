@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'sale_detail.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="top-buttons">
+    <a href="{% url 'manage_sale' %}" class="action-button">
+      <i class="fa fa-list-alt" aria-hidden="true"></i> Back to Sales
+    </a>
+    <a href="{% url 'new_sale' %}" class="action-button">
+      <i class="fa fa-plus-circle" aria-hidden="true"></i> Add Sale
+    </a>
+  </div>
+  <div class="main-content">
+    <div class="sale-details">
+      <!-- Header -->
+      <div class="header">
+        <h2>Sale #{{ sale_data.id|default:"-" }}</h2>
+        <button class="print-button" onclick="window.print()">
+          <i class="fa fa-print" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <!-- Billing Information -->
+      <div class="billing-section">
+        <div class="billing-from">
+          <p class="label">Billing From</p>
+          <strong>Company Name</strong>
+          <p>Company Address</p>
+          <p>Mobile: 1234567</p>
+          <p>Email: salesproject@mail.com</p>
+          <p>Website: https://www.salesproject.com/</p>
+        </div>
+        <div class="billing-to">
+          <p class="label">Billing To</p>
+          <strong>{{ sale_data.customer_name|default:"Unknown" }}</strong>
+          <p>{{ sale_data.customer_address|default:"-" }}</p>
+          <p>Email: {{ sale_data.customer_email|default:"-" }}</p>
+          <p>Mobile: {{ sale_data.customer_mobile|default:"-" }}</p>
+          <p>VAT No: {{ sale_data.customer_vat_number|default:"-" }}</p>
+        </div>
+      </div>
+
+      <!-- Sale Information -->
+      <div class="sale-info">
+        <p><strong>Invoice No:</strong> {{ sale_data.id|default:"-" }}</p>
+        <p><strong>Billing Date:</strong> {{ sale_data.date|date:"Y-m-d"|default:"-" }}</p>
+        <p><strong>Order Time:</strong> {{ sale_data.date|time:"H:i"|default:"12:00" }}</p>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th>Rate</th>
+              <th>Discount %</th>
+              <th>Discount Value</th>
+              <th>VAT %</th>
+              <th>VAT Value</th>
+              <th>Total</th>
+              <th>Description</th>
+              <th>Unit</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in sale_data.items %}
+              <tr>
+                <td>{{ item.product_name|default:"Unknown" }}</td>
+                <td>{{ item.quantity|default:"0" }}</td>
+                <td>${{ item.rate|default:"0.00" }}</td>
+                <td>{{ item.discount_percent|default:"0" }}%</td>
+                <td>${{ item.discount_value|default:"0.00" }}</td>
+                <td>{{ item.vat_percent|default:"0" }}%</td>
+                <td>${{ item.vat_value|default:"0.00" }}</td>
+                <td>${{ item.total|default:"0.00" }}</td>
+                <td>{{ item.description|default:"-" }}</td>
+                <td>{{ item.unit|default:"-" }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="10">No items found for this sale.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Summary -->
+      <div class="summary">
+        <p><strong>Sale Discount:</strong> ${{ sale_data.sale_discount|default:"0.00" }}</p>
+        <p><strong>Shipping Cost:</strong> ${{ sale_data.shipping_cost|default:"0.00" }}</p>
+        <p><strong>Total Discount:</strong> ${{ sale_data.total_discount|default:"0.00" }}</p>
+        <p><strong>Total VAT:</strong> ${{ sale_data.total_vat|default:"0.00" }}</p>
+        <p><strong>Grand Total:</strong> ${{ sale_data.grand_total|default:"0.00" }}</p>
+        <p><strong>Paid Amount:</strong> ${{ sale_data.paid_amount|default:"0.00" }}</p>
+      </div>
+
+      <!-- Signatures -->
+      <div class="signatures">
+        <div class="received-by">
+          <p><strong>Received By:</strong></p>
+          <div class="signature-line"></div>
+        </div>
+        <div class="authorized-by">
+          <p><strong>Authorized By:</strong></p>
+          <div class="signature-line"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

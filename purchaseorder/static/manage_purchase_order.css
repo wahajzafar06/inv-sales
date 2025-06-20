@@ -1,0 +1,148 @@
+/* General styling for the main content area */
+.main-content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* Heading styles */
+h2 {
+    color: #333;
+    font-size: 1.8rem;
+    margin-top: 70px;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+/* Button group styling */
+.button-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+/* General button styles */
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+/* Specific button styles */
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-view {
+    padding: 6px 8px;
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-view:hover {
+    background-color: #218838;
+}
+
+.btn-edit {
+    padding: 6px 8px;
+    background-color: #ffc107;
+    color: black;
+}
+
+.btn-edit:hover {
+    background-color: #e0a800;
+}
+
+.btn-delete {
+    padding: 6px 8px;
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-delete:hover {
+    background-color: #c82333;
+}
+
+/* Messages styling */
+.messages {
+    margin-bottom: 1.5rem;
+}
+
+.alert {
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Table container styling */
+.table-container {
+    overflow-x: auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Table styling */
+.purchase-order-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.purchase-order-table th,
+.purchase-order-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.purchase-order-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+}
+
+.purchase-order-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Discrepancy styling */
+.discrepancy {
+    color: #dc3545;
+    font-weight: 500;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .button-group {
+        text-align: center;
+    }
+
+    .btn {
+        display: block;
+        margin: 0.5rem auto;
+        width: fit-content;
+    }
+
+    .purchase-order-table th,
+    .purchase-order-table td {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+}

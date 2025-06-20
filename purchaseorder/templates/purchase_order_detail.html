@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'purchase_order_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <h2>Purchase Order Detail</h2>
+    
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="purchase-header">
+        <p><strong>Supplier:</strong> {{ purchase_order.supplier.supplier_name|default:"-" }}</p>
+        <p><strong>PO #:</strong> {{ purchase_order.po_number|default:"PO#" }}</p>
+        <p><strong>Created At:</strong> {{ purchase_order.created_at|date:"Y-m-d" }}</p>
+    </div>
+
+    <h3>Items</h3>
+    <div class="table-container">
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Stock</th>
+                    <th>Ordered Qty</th>
+                    <th>Received Qty</th>
+                    <th>Outstanding Qty</th>
+                    <th>Unit Price</th>
+                    <th>Discount %</th>
+                    <th>Discount Value</th>
+                    <th>VAT %</th>
+                    <th>VAT Value</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in purchase_order.items.all %}
+                <tr {% if item.received_quantity < item.ordered_quantity %}class="discrepancy"{% endif %}>
+                    <td>{{ item.product.name|default:"-" }}</td>
+                    <td>{{ item.stock|default:"-" }}</td>
+                    <td>{{ item.ordered_quantity }}</td>
+                    <td>{{ item.received_quantity }}</td>
+                    <td>{{ item.outstanding_quantity|floatformat:2 }}</td>
+                    <td>${{ item.unit_price|floatformat:2 }}</td>
+                    <td>{{ item.discount_percent|floatformat:2 }}%</td>
+                    <td>${{ item.discount_value|floatformat:2 }}</td>
+                    <td>{{ item.vat_percent|floatformat:2 }}%</td>
+                    <td>${{ item.vat_value|floatformat:2 }}</td>
+                    <td>${{ item.total|floatformat:2 }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="11">No items found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if discrepancies %}
+    <div class="alert alert-warning">
+        <strong>Discrepancies Detected:</strong>
+        <ul>
+            {% for item in discrepancies %}
+            <li>{{ item.product.name|default:"-" }}: Ordered {{ item.ordered_quantity }}, Received {{ item.received_quantity }}, Outstanding {{ item.outstanding_quantity|floatformat:2 }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <div class="actions">
+        <a href="{% url 'update_purchase_order' purchase_order.id %}" class="btn btn-primary">Update Purchase Order</a>
+        <a href="{% url 'manage_purchase_order' %}" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
+{% endblock %}

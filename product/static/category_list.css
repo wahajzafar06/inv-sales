@@ -1,0 +1,70 @@
+.category-table {
+  width: calc(100% - 30px);
+  margin: 0 15px 30px;
+  border-collapse: collapse;
+}
+
+.category-table th,
+.category-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+/* Column 1: SL. */
+.category-table th:nth-child(1),
+.category-table td:nth-child(1) {
+  width: 20px;
+  text-align: center;
+}
+
+/* Column 2: Category Name */
+.category-table th:nth-child(2),
+.category-table td:nth-child(2) {
+  width: 150px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Column 3: Status */
+.category-table th:nth-child(3),
+.category-table td:nth-child(3) {
+  width: 80px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Column 4: Action */
+.category-table th:last-child,
+.category-table td:last-child {
+  width: 10px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.category-table th {
+  background-color: #f4f4f4;
+}
+
+.btn {
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: white;
+}
+
+.btn-update {
+  background-color: #007bff;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  margin-left: 5px;
+  border: none;
+}
+
+h2 {
+  margin-top: 72px;
+  text-align: center;
+}

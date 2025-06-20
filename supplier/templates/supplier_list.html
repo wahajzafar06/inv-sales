@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'supplier_list.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <h2>Supplier List</h2>
+  <table class="customer-table">
+    <thead>
+      <tr>
+        <th>SL.</th>
+        <th>Supplier Name</th>
+        <th>Address 1</th>
+        <th>Mobile No</th>
+        <th>Email</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Zip Code</th>
+        <th>Country</th>
+        <th>Balance</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for supplier in suppliers %}
+        <tr {% if updated_supplier and updated_supplier.id == supplier.id %}class="highlight"{% endif %}>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ supplier.supplier_name|default:"-" }}</td>
+          <td>{{ supplier.address1|default:"-" }}</td>
+          <td>{{ supplier.mobile|default:"-" }}</td>
+          <td>{{ supplier.email|default:"-" }}</td>
+          <td>{{ supplier.city|default:"-" }}</td>
+          <td>{{ supplier.state|default:"-" }}</td>
+          <td>{{ supplier.zip|default:"-" }}</td>
+          <td>{{ supplier.country|default:"-" }}</td>
+          <td>{{ supplier.balance|default:"-" }}</td>
+          <td>
+            <a href="{% url 'update_supplier' supplier.id %}" class="btn btn-update">Update</a>
+            <form action="{% url 'delete_supplier' supplier.id %}" method="POST" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-delete">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+          <tr>
+            <td colspan="11">No suppliers available.</td>
+          </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

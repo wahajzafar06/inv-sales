@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'add_product.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="main-content">
+    <h2>{% if product %}Update Product{% else %}Add Product{% endif %}</h2>
+
+    <form action="{% if product %}{% url 'update_product' product.id %}{% else %}{% url 'add_product' %}{% endif %}" method="POST" enctype="multipart/form-data" class="form-grid">
+      {% csrf_token %}
+      
+      <div class="form-left">
+        <div class="form-group">
+          <label for="barcode">Barcode/QR-code</label>
+          <input type="text" id="barcode" name="barcode" 
+                 value="{{ form_data.barcode|default_if_none:'' }}" 
+                 placeholder="Enter barcode or QR-code" required>
+          {% if errors.barcode %}
+            <p class="error">{{ errors.barcode }}</p>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="product_name">Product Name</label>
+          <input type="text" id="product_name" name="product_name" 
+                 value="{{ form_data.product_name|default_if_none:'' }}" 
+                 placeholder="Enter product name" required>
+          {% if errors.product_name %}
+            <p class="error">{{ errors.product_name }}</p>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="category">Category</label>
+          <select id="category" name="category" required>
+            <option value="" {% if not form_data.category %}selected{% endif %}>-- Select Category --</option>
+            {% for category in categories %}
+              <option value="{{ category.id }}" {% if form_data.category == category.id|stringformat:'s' %}selected{% endif %}>
+                {{ category.name }}
+              </option>
+            {% endfor %}
+            {% if not categories %}
+              <option value="" disabled>No active categories available. Please add one first.</option>
+            {% endif %}
+          </select>
+          {% if errors.category %}
+            <p class="error">{{ errors.category }}</p>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="sale_price">Sale Price</label>
+          <input type="number" step="0.01" id="sale_price" name="sale_price" 
+                 value="{{ form_data.sale_price|default_if_none:'' }}" 
+                 placeholder="Enter sale price" required>
+          {% if errors.sale_price %}
+            <p class="error">{{ errors.sale_price }}</p>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="cost_price">Cost Price</label>
+          <input type="number" step="0.01" id="cost_price" name="cost_price" 
+                 value="{{ form_data.cost_price|default_if_none:'' }}" 
+                 placeholder="Enter cost price" required>
+          {% if errors.cost_price %}
+            <p class="error">{{ errors.cost_price }}</p>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="image">Image</label>
+          <input type="file" id="image" name="image" accept="image/*" {% if not product %}required{% endif %}>
+          {% if errors.image %}
+            <p class="error">{{ errors.image }}</p>
+          {% endif %}
+          {% if product and product.image %}
+            <p>Current image: <img src="{{ product.image.url }}" alt="Product Image" class="image-preview"></p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="form-right">
+        <div class="form-group">
+          <label for="supplier">Supplier</label>
+          <select id="supplier" name="supplier" required>
+            <option value="" {% if not form_data.supplier %}selected{% endif %}>-- Select Supplier --</option>
+            {% for supplier in suppliers %}
+              <option value="{{ supplier.id }}" {% if form_data.supplier == supplier.id|stringformat:'s' %}selected{% endif %}>
+                {{ supplier.supplier_name }}
+              </option>
+            {% endfor %}
+            {% if not suppliers %}
+              <option value="" disabled>No suppliers available. Please add one first.</option>
+            {% endif %}
+          </select>
+          {% if errors.supplier %}
+            <p class="error">{{ errors.supplier }}</p>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="serial_number">Serial Number</label>
+          <input type="text" id="serial_number" name="serial_number" 
+                 value="{{ form_data.serial_number|default_if_none:'' }}" 
+                 placeholder="Enter serial number">
+          {% if errors.serial_number %}
+            <p class="error">{{ errors.serial_number }}</p>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="model">Model</label>
+          <input type="text" id="model" name="model" 
+                 value="{{ form_data.model|default_if_none:'' }}" 
+                 placeholder="Enter model">
+          {% if errors.model %}
+            <p class="error">{{ errors.model }}</p>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="unit">Unit</label>
+          <select id="unit" name="unit" required>
+            <option value="" {% if not form_data.unit %}selected{% endif %}>-- Select Unit --</option>
+            {% for unit in units %}
+              <option value="{{ unit.id }}" {% if form_data.unit == unit.id|stringformat:'s' %}selected{% endif %}>
+                {{ unit.name }}
+              </option>
+            {% endfor %}
+            {% if not units %}
+              <option value="" disabled>No active units available. Please add one first.</option>
+            {% endif %}
+          </select>
+          {% if errors.unit %}
+            <p class="error">{{ errors.unit }}</p>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="details">Product Details</label>
+          <textarea id="details" name="details" placeholder="Enter product details">{{ form_data.details|default_if_none:'' }}</textarea>
+          {% if errors.details %}
+            <p class="error">{{ errors.details }}</p>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="vat_percentage">VAT Percentage</label>
+          <input type="number" step="0.01" id="vat_percentage" name="vat_percentage" 
+                 value="{{ form_data.vat_percentage|default_if_none:'0.00' }}" 
+                 placeholder="Enter VAT percentage">
+          {% if errors.vat_percentage %}
+            <p class="error">{{ errors.vat_percentage }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <button type="submit" class="submit-button">{% if product %}Update{% else %}Submit{% endif %}</button>
+    </form>
+  </div>
+{% endblock %}

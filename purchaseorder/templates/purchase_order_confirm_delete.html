@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="main-content">
+        <h2>Confirm Delete Purchase Order</h2>
+        <p>Are you sure you want to delete Purchase Order <strong>{{ object.po_number }}</strong>?</p>
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-delete">Delete</button>
+            <a href="{% url 'manage_purchase_order' %}" class="btn btn-back">Cancel</a>
+        </form>
+    </div>
+{% endblock %}

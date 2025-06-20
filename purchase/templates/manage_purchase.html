@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'manage_purchase.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="main-content">
+    <h2>Purchase List</h2>
+    <div class="filter-container">
+      <div class="date-filter">
+        <label for="fromDate">From</label>
+        <input type="date" id="fromDate">
+        <label for="toDate">To</label>
+        <input type="date" id="toDate">
+        <button onclick="filterByDate()">Find</button>
+      </div>
+      <div class="search-bar">
+        <input type="text" placeholder="Search..." id="purchaseSearchInput" onkeyup="filterPurchaseTable()">
+      </div>
+    </div>
+    <div class="table-wrapper">
+      <table class="purchase-table">
+        <thead>
+          <tr>
+            <th>SL.</th>
+            <th>Invoice No</th>
+            <th>Supplier Name</th>
+            <th>Purchase Date <span class="sort-icon asc" onclick="sortTableByDate()"></span></th>
+            <th>Total Amount</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="purchaseTableBody">
+          {% for purchase in purchases %}
+            <tr {% if updated_purchase and updated_purchase == purchase.id|stringformat:"s" %}class="highlight"{% endif %} data-date="{{ purchase.purchase_date|date:'Y-m-d' }}">
+              <td>{{ forloop.counter }}</td>
+              <td>{{ purchase.challan_no|default:"-" }}</td>
+              <td>{{ purchase.supplier.supplier_name|default:"-" }}</td>
+              <td>{{ purchase.purchase_date|date:"Y-m-d"|default:"-" }}</td>
+              <td>{{ purchase.grand_total|default:"0.00" }}</td>
+              <td>
+                <a href="{% url 'purchase_detail' purchase.id %}" class="btn btn-update"><i class="fa fa-window-maximize" aria-hidden="true"></i></a>
+              </td>
+            </tr>
+            {% empty %}
+              <tr>
+                <td colspan="6">No purchases available.</td>
+              </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td colspan="4">Total</td>
+            <td id="totalAmount">0.00</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    let isAscending = true;
+
+    function filterPurchaseTable() {
+      const input = document.getElementById("purchaseSearchInput");
+      const filter = input.value.toLowerCase();
+      const rows = document.querySelectorAll("#purchaseTableBody tr:not(.total-row)");
+      let total = 0;
+
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        const isVisible = text.includes(filter);
+        row.style.display = isVisible ? "" : "none";
+        if (isVisible) {
+          const amount = parseFloat(row.querySelector("td:nth-child(5)").innerText) || 0;
+          total += amount;
+        }
+      });
+
+      document.getElementById("totalAmount").innerText = total.toFixed(2);
+    }
+
+    function sortTableByDate() {
+      const tbody = document.getElementById("purchaseTableBody");
+      const rows = Array.from(tbody.querySelectorAll("tr:not(.total-row)"));
+      const sortIcon = document.querySelector(".sort-icon");
+
+      rows.sort((a, b) => {
+        const dateA = new Date(a.getAttribute("data-date"));
+        const dateB = new Date(b.getAttribute("data-date"));
+        return isAscending ? dateA - dateB : dateB - dateA;
+      });
+
+      isAscending = !isAscending;
+      sortIcon.className = `sort-icon ${isAscending ? 'asc' : 'desc'}`;
+
+      tbody.innerHTML = "";
+      rows.forEach(row => tbody.appendChild(row));
+      filterPurchaseTable(); // Recalculate total after sorting
+    }
+
+    function filterByDate() {
+      const fromDate = document.getElementById("fromDate").value;
+      const toDate = document.getElementById("toDate").value;
+      const rows = document.querySelectorAll("#purchaseTableBody tr:not(.total-row)");
+      let total = 0;
+
+      rows.forEach(row => {
+        const rowDate = row.getAttribute("data-date");
+        const isInRange = (!fromDate || rowDate >= fromDate) && (!toDate || rowDate <= toDate);
+        row.style.display = isInRange ? "" : "none";
+        if (isInRange) {
+          const amount = parseFloat(row.querySelector("td:nth-child(5)").innerText) || 0;
+          total += amount;
+        }
+      });
+
+      document.getElementById("totalAmount").innerText = total.toFixed(2);
+    }
+
+    // Initialize total on page load
+    document.addEventListener("DOMContentLoaded", () => {
+      filterPurchaseTable();
+    });
+  </script>
+{% endblock %}

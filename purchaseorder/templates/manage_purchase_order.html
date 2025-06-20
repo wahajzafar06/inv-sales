@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'manage_purchase_order.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <h2>Manage Purchase Orders</h2>
+    <div class="button-group">
+        <a href="{% url 'add_purchase_order' %}" class="btn btn-primary" title="Add Purchase Order">
+            <i class="fa fa-plus" aria-hidden="true"></i> Add Purchase Order
+        </a>
+    </div>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="table-container">
+        <table class="purchase-order-table">
+            <thead>
+                <tr>
+                    <th>PO Number</th>
+                    <th>Created At</th>
+                    <th>Supplier</th>
+                    <th>Items</th>
+                    <th>Discrepancies</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for purchase_order in purchase_orders %}
+                    <tr>
+                        <td>{{ purchase_order.po_number|default:"PO#" }}</td>
+                        <td>{{ purchase_order.created_at|date:"Y-m-d H:i:s" }}</td>
+                        <td>{{ purchase_order.supplier.supplier_name|default:"-" }}</td>
+                        <td>{{ purchase_order.items.count }}</td>
+                        <td>
+                            {% if purchase_order.discrepancy_count %}
+                                <span class="discrepancy">{{ purchase_order.discrepancy_count }} item(s)</span>
+                            {% else %}
+                                None
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'purchase_order_detail' purchase_order.pk %}" class="btn btn-view" title="View Details"><i class="fa fa-window-maximize" aria-hidden="true"></i></a>
+                            <a href="{% url 'update_purchase_order' purchase_order.id %}" class="btn btn-edit"title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <a href="{% url 'delete_purchase_order' purchase_order.id %}" class="btn btn-delete" title="Delete" onclick="return confirm('Are you sure you want to delete PO {{ purchase_order.po_number|default:'#' }}?');"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6">No purchase orders found.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

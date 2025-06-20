@@ -1,0 +1,335 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'stock_report.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="main-content">
+    <div class="stock-details">
+      <h2>Stock Report</h2>
+      <!-- Header -->
+      <div class="header">
+        <div class="header-left">
+          <select id="rowsPerPage" class="rows-select">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+        <div class="button-group">
+          <button id="copyButton" class="action-button" title="Copy to clipboard">
+            <i class="fa fa-copy" aria-hidden="true"></i> Copy
+          </button>
+          <button id="csvButton" class="action-button" title="Download as CSV">
+            <i class="fa fa-file-csv" aria-hidden="true"></i> CSV
+          </button>
+          <button id="pdfButton" class="action-button" title="Download as PDF">
+            <i class="fa fa-file-pdf" aria-hidden="true"></i> PDF
+          </button>
+          <a href="{% url 'add_purchase_order' %}" class="action-button" title="Add Purchase Order">
+            <i class="fa fa-plus" aria-hidden="true"></i> Add PO
+          </a>
+        </div>
+        <div class="header-controls">
+          <input type="text" id="searchInput" class="search-bar" placeholder="Search by name or model..." />
+          <button class="print-button" onclick="window.print()">
+            <i class="fa fa-print" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table class="stock-table">
+          <thead>
+            <tr>
+              <th>SL.</th>
+              <th>Product Name</th>
+              <th>Product Model</th>
+              <th>Sale Price</th>
+              <th>Purchase Price</th>
+              <th>In Qnty</th>
+              <th>Out Qnty</th>
+              <th>Stock</th>
+              <th>Stock Sale Price</th>
+              <th>Stock Purchase Price</th>
+            </tr>
+          </thead>
+          <tbody id="stockTableBody">
+            {% for item in stock_data %}
+              <tr class="stock-row" data-name="{{ item.product.name|lower }}" data-model="{{ item.product.model|default:''|lower }}">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ item.product.name|default:"-" }}</td>
+                <td>{{ item.product.model|default:"-" }}</td>
+                <td>${{ item.product.sale_price|floatformat:2|default:"0.00" }}</td>
+                <td>${{ item.product.cost_price|floatformat:2|default:"0.00" }}</td>
+                <td>{{ item.in_qty|default:"0" }}</td>
+                <td>{{ item.out_qty|default:"0" }}</td>
+                <td>{{ item.stock|default:"0" }}</td>
+                <td>${{ item.stock_sale_price|floatformat:2|default:"0.00" }}</td>
+                <td>{{ item.stock_purchase_price|floatformat:2|default:"0.00" }}</td>
+              </tr>
+            {% empty %}
+              <tr class="no-data">
+                <td colspan="10">No stock data available.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr id="summaryRow">
+              <td colspan="7" style="text-align: right; padding-right: 25px; font-weight: bold;">Total :</td>
+              <td id="filteredStockTotal" style="font-weight: bold;">{{ total_stock|default:"0" }}</td>
+              <td id="filteredSaleTotal" style="font-weight: bold;">${{ total_stock_sale_price|floatformat:2|default:"0.00" }}</td>
+              <td id="filteredPurchaseTotal" style="font-weight: bold;">${{ total_stock_purchase_price|floatformat:2|default:"0.00" }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Pagination and Entries Status -->
+      <div class="pagination-container">
+        <div class="entries-status" id="entriesStatus">
+          Showing 0 to 0 of 0 entries
+        </div>
+        <div class="pagination">
+          <button id="prevPage" class="pagination-button" disabled>Previous</button>
+          <span id="pageNumbers"></span>
+          <button id="nextPage" class="pagination-button" disabled>Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load jsPDF and jspdf-autotable libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.3/jspdf.plugin.autotable.min.js"></script>
+  <script>
+    // Initialize jsPDF
+    const { jsPDF } = window.jspdf;
+
+    // Initialize variables
+    let currentPage = 1;
+    let rowsPerPage = 10;
+    let searchTerm = '';
+    const rows = Array.from(document.querySelectorAll('#stockTableBody .stock-row'));
+    const noDataRow = document.querySelector('.no-data');
+    const tbody = document.getElementById('stockTableBody');
+    const headers = ['SL.', 'Product Name', 'Product Model', 'Sale Price', 'Purchase Price', 'In Qnty', 'Out Qnty', 'Stock', 'Stock Sale Price', 'Stock Purchase Price'];
+
+    // Function to get visible rows data
+    function getVisibleRowsData() {
+      const filteredRows = rows.filter(row => row.style.display !== 'none');
+      return filteredRows.map((row, index) => ({
+        sl: index + 1,
+        name: row.cells[1].textContent,
+        model: row.cells[2].textContent,
+        salePrice: row.cells[3].textContent,
+        purchasePrice: row.cells[4].textContent,
+        inQty: row.cells[5].textContent,
+        outQty: row.cells[6].textContent,
+        stock: row.cells[7].textContent,
+        stockSalePrice: row.cells[8].textContent,
+        stockPurchasePrice: row.cells[9].textContent
+      }));
+    }
+
+    // Function to update table display
+    function updateTable() {
+      // Filter rows based on search term
+      const filteredRows = rows.filter(row => {
+        const productName = row.getAttribute('data-name');
+        const productModel = row.getAttribute('data-model');
+        return productName.includes(searchTerm) || productModel.includes(searchTerm);
+      });
+
+      // Calculate pagination
+      const totalRows = filteredRows.length;
+      const totalPages = Math.ceil(totalRows / rowsPerPage);
+      currentPage = Math.min(currentPage, totalPages || 1);
+
+      // Get rows for current page
+      const startIndex = (currentPage - 1) * rowsPerPage;
+      const endIndex = startIndex + rowsPerPage;
+      const visibleRows = filteredRows.slice(startIndex, endIndex);
+
+      // Hide all rows and show only visible ones
+      rows.forEach(row => row.style.display = 'none');
+      visibleRows.forEach(row => row.style.display = '');
+
+      // Update SL numbers
+      visibleRows.forEach((row, index) => {
+        row.cells[0].textContent = startIndex + index + 1;
+      });
+
+      // Show/hide no-data row
+      if (noDataRow) {
+        noDataRow.style.display = totalRows > 0 ? 'none' : '';
+      }
+
+      // Update footer totals
+      let filteredStockTotal = 0;
+      let filteredSaleTotal = 0;
+      let filteredPurchaseTotal = 0;
+      visibleRows.forEach(row => {
+        filteredStockTotal += parseInt(row.cells[7].textContent) || 0;
+        filteredSaleTotal += parseFloat(row.cells[8].textContent.replace('$', '')) || 0;
+        filteredPurchaseTotal += parseFloat(row.cells[9].textContent.replace('$', '')) || 0;
+      });
+      document.getElementById('filteredStockTotal').textContent = filteredStockTotal;
+      document.getElementById('filteredSaleTotal').textContent = '$' + filteredSaleTotal.toFixed(2);
+      document.getElementById('filteredPurchaseTotal').textContent = '$' + filteredPurchaseTotal.toFixed(2);
+
+      // Update entries status
+      const startEntry = totalRows > 0 ? startIndex + 1 : 0;
+      const endEntry = Math.min(endIndex, totalRows);
+      document.getElementById('entriesStatus').textContent = 
+        `Showing ${startEntry} to ${endEntry} of ${totalRows} entries`;
+
+      // Update pagination controls
+      updatePagination(totalPages);
+    }
+
+    // Function to update pagination buttons
+    function updatePagination(totalPages) {
+      const prevPageBtn = document.getElementById('prevPage');
+      const nextPageBtn = document.getElementById('nextPage');
+      const pageNumbers = document.getElementById('pageNumbers');
+
+      // Enable/disable buttons
+      prevPageBtn.disabled = currentPage === 1;
+      nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
+
+      // Generate page numbers
+      pageNumbers.innerHTML = '';
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'pagination-button' + (i === currentPage ? ' active' : '');
+        btn.textContent = i;
+        btn.addEventListener('click', () => {
+          currentPage = i;
+          updateTable();
+        });
+        pageNumbers.appendChild(btn);
+      }
+    }
+
+    // Copy to clipboard
+    document.getElementById('copyButton').addEventListener('click', () => {
+      const data = getVisibleRowsData();
+      if (data.length === 0) {
+        alert('No data to copy.');
+        return;
+      }
+      const text = [headers.join('\t'), ...data.map(row => 
+        [row.sl, row.name, row.model, row.salePrice, row.purchasePrice, row.inQty, row.outQty, row.stock, row.stockSalePrice, row.stockPurchasePrice].join('\t')
+      )].join('\n');
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Table data copied to clipboard!');
+      }).catch(err => {
+        console.error('Copy failed:', err);
+        alert('Failed to copy data.');
+      });
+    });
+
+    // Download as CSV
+    document.getElementById('csvButton').addEventListener('click', () => {
+      const data = getVisibleRowsData();
+      if (data.length === 0) {
+        alert('No data to download.');
+        return;
+      }
+      const csv = [headers.join(','), ...data.map(row => 
+        `"${row.sl}","${row.name}","${row.model}","${row.salePrice}","${row.purchasePrice}","${row.inQty}","${row.outQty}","${row.stock}","${row.stockSalePrice}","${row.stockPurchasePrice}"`
+      )].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'stock_report.csv';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    });
+
+    // Download as PDF
+    document.getElementById('pdfButton').addEventListener('click', () => {
+      try {
+        const data = getVisibleRowsData();
+        if (data.length === 0) {
+          alert('No data to download.');
+          return;
+        }
+        const doc = new jsPDF();
+        doc.setFontSize(16);
+        doc.text('Stock Report', 14, 20);
+        doc.setFontSize(10);
+        const tableData = data.map(row => [
+          row.sl, row.name, row.model, row.salePrice, row.purchasePrice, row.inQty, row.outQty, row.stock, row.stockSalePrice, row.stockPurchasePrice
+        ]);
+        doc.autoTable({
+          head: [headers],
+          body: tableData,
+          startY: 30,
+          styles: { fontSize: 8, cellPadding: 2 },
+          headStyles: { fillColor: [76, 175, 80] },
+          columnStyles: {
+            0: { cellWidth: 10 },
+            1: { cellWidth: 30 },
+            2: { cellWidth: 20 },
+            3: { cellWidth: 20 },
+            4: { cellWidth: 20 },
+            5: { cellWidth: 15 },
+            6: { cellWidth: 15 },
+            7: { cellWidth: 15 },
+            8: { cellWidth: 25 },
+            9: { cellWidth: 25 }
+          }
+        });
+        doc.save('stock_report.pdf');
+      } catch (err) {
+        console.error('PDF generation failed:', err);
+        alert('Failed to generate PDF. Please check the console for details.');
+      }
+    });
+
+    // Event listeners for pagination and rows per page
+    document.getElementById('rowsPerPage').addEventListener('change', function() {
+      rowsPerPage = parseInt(this.value);
+      currentPage = 1;
+      updateTable();
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+      searchTerm = this.value.toLowerCase();
+      currentPage = 1;
+      updateTable();
+    });
+
+    document.getElementById('prevPage').addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        updateTable();
+      }
+    });
+
+    document.getElementById('nextPage').addEventListener('click', () => {
+      const filteredRows = rows.filter(row => {
+        const productName = row.getAttribute('data-name');
+        const productModel = row.getAttribute('data-model');
+        return productName.includes(searchTerm) || productModel.includes(searchTerm);
+      });
+      const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        updateTable();
+      }
+    });
+
+    // Initial table update
+    updateTable();
+  </script>
+{% endblock %}

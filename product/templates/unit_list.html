@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'unit_list.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <h2>Unit List</h2>
+  <table class="unit-table">
+    <thead>
+      <tr>
+        <th>SL.</th>
+        <th>Unit Name</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for unit in units %}
+        <tr {% if updated_unit and updated_unit.id == unit.id %}class="highlight"{% endif %}>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ unit.name }}</td>
+          <td>{{ unit.status }}</td>
+          <td>
+            <a href="{% url 'update_unit' unit.id %}" class="btn btn-update">Update</a>
+            <form action="{% url 'delete_unit' unit.id %}" method="POST" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-delete">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4">No units available.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}

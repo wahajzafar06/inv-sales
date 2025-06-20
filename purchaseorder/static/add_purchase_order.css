@@ -1,0 +1,196 @@
+.main-content {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.purchase-order-header {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  overflow: hidden;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+}
+
+.table-container {
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+.item-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.item-table th,
+.item-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.item-table th:nth-child(1), .item-table td:nth-child(1) { /* Product */
+  width: 20%;
+}
+.item-table th:nth-child(2), .item-table td:nth-child(2) { /* Stock */
+  width: 8%;
+}
+.item-table th:nth-child(3), .item-table td:nth-child(3) { /* Ordered Qty */
+  width: 8%;
+}
+.item-table th:nth-child(4), .item-table td:nth-child(4) { /* Received Qty */
+  width: 8%;
+}
+.item-table th:nth-child(5), .item-table td:nth-child(5) { /* Unit Price */
+  width: 8%;
+}
+.item-table th:nth-child(6), .item-table td:nth-child(6) { /* Discount % */
+  width: 8%;
+}
+.item-table th:nth-child(7), .item-table td:nth-child(7) { /* Discount Value */
+  width: 8%;
+}
+.item-table th:nth-child(8), .item-table td:nth-child(8) { /* VAT % */
+  width: 8%;
+}
+.item-table th:nth-child(9), .item-table td:nth-child(9) { /* VAT Value */
+  width: 8%;
+}
+.item-table th:nth-child(10), .item-table td:nth-child(10) { /* Total */
+  width: 8%;
+}
+.item-table th:nth-child(11), .item-table td:nth-child(11) { /* Outstanding Qty */
+  width: 8%;
+}
+.item-table th:nth-child(12), .item-table td:nth-child(12) { /* Action */
+  width: 8%;
+}
+
+.item-table tr.discrepancy {
+  background-color: #ffe6e6;
+}
+
+.item-table input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px;
+  font-size: 14px;
+}
+
+.autocomplete-container {
+  position: relative;
+}
+
+.suggestions {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+  width: 100%;
+  z-index: 1000;
+  display: none;
+}
+
+.suggestion-item {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.suggestion-item:hover {
+  background-color: #f0f0f0;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-add {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn-delete {
+  background-color: #f44336;
+  color: white;
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+.submit-button {
+  background-color: #2196f3;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+.alert {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.alert-error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.alert-success {
+  background-color: #dff0d8;
+  color: #3c763d;
+}
+
+.alert-warning {
+  background-color: #fcf8e3;
+  color: #8a6d3b;
+}

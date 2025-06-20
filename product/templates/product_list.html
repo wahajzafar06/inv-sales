@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'product_list.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <h2>Product List</h2>
+
+  <table class="product-table">
+    <thead>
+      <tr>
+        <th>SL.</th>
+        <th>Barcode</th>
+        <th>Product Name</th>
+        <th>Category</th>
+        <th>Sale Price</th>
+        <th>Cost Price</th>
+        <th>Supplier</th>
+        <th>Unit</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+        <tr {% if updated_product and updated_product.id == product.id %}class="highlight"{% endif %}>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ product.barcode }}</td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.category.name|default:"N/A" }}</td>
+          <td>{{ product.sale_price|default:"0.00" }}</td>
+          <td>{{ product.cost_price|default:"0.00" }}</td>
+          <td>{{ product.supplier.supplier_name|default:"N/A" }}</td>
+          <td>{{ product.unit.name|default:"N/A" }}</td>
+          <td>
+            <a href="{% url 'update_product' product.id %}" class="btn btn-update">Update</a>
+            <form action="{% url 'delete_product' product.id %}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete {{ product.name }}?');">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-delete">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="9">No products available.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

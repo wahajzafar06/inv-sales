@@ -1,0 +1,275 @@
+/* Prevent horizontal scrolling at page level */
+html, body {
+    margin: 0;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+/* General container styling */
+.main-content {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Heading */
+h2 {
+    color: #333;
+    font-size: 24px;
+    margin-top: 72px;
+    text-align: center;
+}
+
+/* Add button */
+.add-button {
+    display: inline-block;
+    padding: 6px 12px;
+    background-color: #4caf50;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.add-button:hover {
+    background-color: #45a049;
+}
+
+/* Filter container */
+.filter-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Search bar */
+.search-bar input {
+    margin-right: 70px;
+    width: 85%;
+    max-width: 300px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: #4caf50;
+}
+
+/* Date filter */
+.date-filter label {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #333;
+    font-weight: 600;
+}
+
+.date-filter input[type="date"] {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.date-filter input[type="date"]:focus {
+    outline: none;
+    border-color: #4caf50;
+}
+
+.date-filter button {
+    padding: 6px 12px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.date-filter button:hover {
+    background-color: #45a049;
+}
+
+/* Table wrapper for scrolling */
+.table-wrapper {
+    max-height: 600px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Table styling */
+.sales-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    color: #333;
+    box-sizing: border-box;
+    table-layout: fixed;
+}
+
+.sales-table th,
+.sales-table td {
+    padding: 7px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sales-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    color: #555;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.sales-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Sort icon */
+.sort-icon {
+    cursor: pointer;
+    margin-left: 5px;
+    font-size: 16px;
+    color: #4caf50;
+}
+
+.sort-icon.asc::after {
+    content: "↑";
+}
+
+.sort-icon.desc::after {
+    content: "↓";
+}
+
+/* Highlighted row */
+.highlight {
+    background-color: #e8f5e9;
+}
+
+/* Action button */
+.btn.btn-update {
+    display: inline-block;
+    padding: 6px 8px;
+    background-color: #4caf50;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.btn.btn-update:hover {
+    background-color: #45a049;
+}
+
+/* Total row */
+.total-row {
+    font-weight: bold;
+    background-color: #f0f0f0;
+}
+
+.total-row td {
+    padding: 6px;
+    border-top: 2px solid #ddd;
+}
+
+/* Error and success messages */
+.error {
+    color: #d32f2f;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.error ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.error li {
+    margin-bottom: 5px;
+}
+
+.success {
+    color: #4caf50;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 10px;
+    }
+
+    .sales-table {
+        font-size: 12px;
+    }
+
+    .sales-table th,
+    .sales-table td {
+        padding: 4px;
+    }
+
+    .filter-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .date-filter {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .date-filter input,
+    .date-filter button {
+        width: 100%;
+        max-width: 200px;
+        margin-bottom: 8px;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
+
+    .search-bar input {
+        margin-right: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .btn.btn-update {
+        padding: 3px 6px;
+        font-size: 11px;
+    }
+
+    .add-button {
+        padding: 3px 6px;
+        font-size: 12px;
+    }
+
+    .table-wrapper {
+        margin: 0;
+    }
+}

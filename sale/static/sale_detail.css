@@ -1,0 +1,256 @@
+/* Prevent horizontal scrolling at page level */
+html, body {
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* Main Content */
+.main-content {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Centered Button Group */
+.top-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 70px;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Action Buttons */
+.action-button {
+    text-decoration: none;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s ease-in-out;
+    box-sizing: border-box;
+}
+
+.action-button:hover {
+    background-color: #45a049;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header h2 {
+    color: #333;
+    font-size: 24px;
+}
+
+.print-button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.print-button i {
+    font-size: 18px;
+}
+
+.print-button:hover {
+    background-color: #45a049;
+}
+
+/* Billing Section */
+.billing-section {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.billing-from,
+.billing-to {
+    width: 45%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.label {
+    font-weight: bold;
+    color: #4caf50;
+    margin-bottom: 5px;
+}
+
+/* Sale Info */
+.sale-info {
+    text-align: right;
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.sale-info p {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+/* Table wrapper for scrolling */
+.table-wrapper {
+    max-height: 600px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Table */
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    color: #333;
+    box-sizing: border-box;
+    table-layout: fixed;
+}
+
+.items-table th,
+.items-table td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.items-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    color: #555;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.items-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Summary */
+.summary {
+    text-align: right;
+    margin-top: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.summary p {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+/* Signatures */
+.signatures {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.received-by,
+.authorized-by {
+    width: 45%;
+}
+
+.received-by p,
+.authorized-by p {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.signature-line {
+    border-top: 1px solid #333;
+    height: 40px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 10px;
+    }
+
+    .billing-section {
+        flex-direction: column;
+    }
+
+    .billing-from,
+    .billing-to {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .items-table {
+        font-size: 12px;
+    }
+
+    .items-table th,
+    .items-table td {
+        padding: 8px;
+    }
+
+    .top-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .action-button {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .sale-info,
+    .summary {
+        text-align: center;
+    }
+
+    .signatures {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .received-by,
+    .authorized-by {
+        width: 100%;
+    }
+
+    .table-wrapper {
+        margin: 0;
+    }
+}

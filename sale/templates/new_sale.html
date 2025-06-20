@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'new_sale.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="main-content">
+        <h2>{% if sale %}Update Sale{% else %}New Sale{% endif %}</h2>
+        <form method="POST" action="{% url 'new_sale' %}" class="sale-form">
+            {% csrf_token %}
+            <!-- Formset management fields -->
+            <input type="hidden" id="id_items-TOTAL_FORMS" name="items-TOTAL_FORMS" value="{{ form_data.items|length|default:'1' }}">
+            <input type="hidden" id="id_items-INITIAL_FORMS" name="items-INITIAL_FORMS" value="0">
+            <input type="hidden" id="id_items-MIN_NUM_FORMS" name="items-MIN_NUM_FORMS" value="1">
+            <input type="hidden" id="id_items-MAX_NUM_FORMS" name="items-MAX_NUM_FORMS" value="1000">
+            
+            <!-- Customer and Date Section -->
+            <div class="purchase-header">
+                <div class="column1">
+                    <div class="form-group">
+                        <label for="customer">Customer</label>
+                        <select id="customer" name="customer" required>
+                            <option value="">-- Select Customer --</option>
+                            {% for customer in customers %}
+                                <option value="{{ customer.id }}" {% if form_data.customer == customer.id|stringformat:'s' %}selected{% endif %}>
+                                    {{ customer.customer_name|default_if_none:'Unnamed Customer' }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="column2">
+                    <div class="form-group">
+                        <label for="date">Sale Date</label>
+                        <input type="date" id="date" name="date" value="{{ form_data.date|date:'Y-m-d' }}" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items Table -->
+            <div class="table-container">
+                <table class="item-table">
+                    <thead>
+                        <tr>
+                            <th>Item Information</th>
+                            <th>Qty</th>
+                            <th>Rate</th>
+                            <th>Discount %</th>
+                            <th>Dis. Value</th>
+                            <th>Vat %</th>
+                            <th>Vat Value</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="item-formset">
+                        {% for item in form_data.items %}
+                            <tr class="item-row">
+                                <td>
+                                    <div class="autocomplete-container">
+                                        <input type="text" class="product-input" value="{{ item.product_name|default_if_none:'' }}" placeholder="Type product name" required>
+                                        <input type="hidden" name="items-{{ forloop.counter0 }}-product" class="product-id" value="{{ item.prod_id|default_if_none:'' }}">
+                                        <input type="hidden" name="items-{{ forloop.counter0 }}-product_name" value="{{ item.product_name|default_if_none:'' }}">
+                                        <input type="hidden" name="items-{{ forloop.counter0 }}-available_quantity" value="{{ item.available_quantity|default:'0.00' }}">
+                                        <div class="suggestions"></div>
+                                    </div>
+                                </td>
+                                <td><input type="number" step="1" name="items-{{ forloop.counter0 }}-quantity" class="quantity" value="{{ item.quantity|default:'1' }}" min="1" required></td>
+                                <td><input type="number" step="0.01" name="items-{{ forloop.counter0 }}-rate" class="rate" value="{{ item.rate|default:'0.00' }}" min="0" required></td>
+                                <td><input type="number" step="0.01" name="items-{{ forloop.counter0 }}-discount_percent" class="discount-percent" value="{{ item.discount_percent|default:'0.00' }}" min="0" max="100"></td>
+                                <td><input type="number" step="0.01" name="items-{{ forloop.counter0 }}-discount_value" class="discount-value" value="{{ item.discount_value|default:'0.00' }}" readonly></td>
+                                <td><input type="number" step="0.01" name="items-{{ forloop.counter0 }}-vat_percent" class="vat-percent" value="{{ item.vat_percent|default:'0.00' }}" min="0" max="100"></td>
+                                <td><input type="number" step="0.01" name="items-{{ forloop.counter0 }}-vat_value" class="vat-value" value="{{ item.vat_value|default:'0.00' }}" readonly></td>
+                                <td><input type="number" step="0.01" name="items-{{ forloop.counter0 }}-total" class="total" value="{{ item.total|default:'0.00' }}" readonly></td>
+                                <td>
+                                    {% if forloop.counter0 > 0 %}
+                                        <button type="button" class="delete-row btn btn-delete">✖</button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button type="button" id="add-item-btn" class="btn btn-add">Add Item</button>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="summary">
+                <div class="form-group">
+                    <label for="sale_discount">Sale Discount:</label>
+                    <input type="number" step="0.01" id="sale_discount" name="sale_discount" value="{{ form_data.sale_discount|default:'0.00' }}" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="total_discount">Total Discount:</label>
+                    <input type="number" step="0.01" id="total_discount" name="total_discount" value="{{ form_data.total_discount|default:'0.00' }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="total_vat">Total VAT:</label>
+                    <input type="number" step="0.01" id="total_vat" name="total_vat" value="{{ form_data.total_vat|default:'0.00' }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="grand_total">Grand Total:</label>
+                    <input type="number" step="0.01" id="grand_total" name="grand_total" value="{{ form_data.grand_total|default:'0.00' }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="paid_amount">Paid Amount:</label>
+                    <input type="number" step="0.01" id="paid_amount" name="paid_amount" value="{{ form_data.paid_amount|default:'0.00' }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="due_amount">Due Amount:</label>
+                    <input type="number" step="0.01" id="due_amount" name="due_amount" value="0.00" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="payment_type">Payment Type:</label>
+                    <select id="payment_type" name="payment_type">
+                        <option value="Cash" {% if form_data.payment_type == 'Cash' %}selected{% endif %}>Cash</option>
+                        <option value="Credit" {% if form_data.payment_type == 'Credit' %}selected{% endif %}>Credit</option>
+                        <option value="Other" {% if form_data.payment_type == 'Other' %}selected{% endif %}>Bank Transfer</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-button">Submit Sale</button>
+        </form>
+    </div>
+
+    <script>
+        const products = [
+            {% for product in all_products %}
+                {
+                    id: "{{ product.id }}",
+                    name: "{{ product.name|escapejs|default_if_none:'Unnamed Product' }}",
+                    salePrice: "{{ product.sale_price|default:'0.00' }}",
+                    vatPercent: "{{ product.vat_percentage|default:'0.00' }}"
+                }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        let selectedProductIds = new Set();
+
+        function calculateItemRow(row) {
+            const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+            const rate = parseFloat(row.querySelector('.rate').value) || 0;
+            const discountPercent = parseFloat(row.querySelector('.discount-percent').value) || 0;
+            const vatPercent = parseFloat(row.querySelector('.vat-percent').value) || 0;
+
+            // Calculate values
+            const subtotal = quantity * rate;
+            const discountValue = (subtotal * discountPercent) / 100;
+            const amountAfterDiscount = subtotal - discountValue;
+            const vatValue = (amountAfterDiscount * vatPercent) / 100;
+            const total = amountAfterDiscount + vatValue;
+
+            // Update fields
+            row.querySelector('.discount-value').value = discountValue.toFixed(2);
+            row.querySelector('.vat-value').value = vatValue.toFixed(2);
+            row.querySelector('.total').value = total.toFixed(2);
+
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const rows = document.querySelectorAll('#item-formset .item-row');
+            let totalDiscount = 0;
+            let totalVat = 0;
+            let itemsTotal = 0;
+
+            rows.forEach(row => {
+                totalDiscount += parseFloat(row.querySelector('.discount-value').value) || 0;
+                totalVat += parseFloat(row.querySelector('.vat-value').value) || 0;
+                itemsTotal += parseFloat(row.querySelector('.total').value) || 0;
+            });
+
+            const saleDiscount = parseFloat(document.getElementById('sale_discount').value) || 0;
+            const totalDiscountWithSale = totalDiscount + saleDiscount;
+            const grandTotal = itemsTotal;
+
+            // Update summary fields
+            document.getElementById('total_discount').value = totalDiscountWithSale.toFixed(2);
+            document.getElementById('total_vat').value = totalVat.toFixed(2);
+            document.getElementById('grand_total').value = grandTotal.toFixed(2);
+            document.getElementById('paid_amount').value = grandTotal.toFixed(2);
+            document.getElementById('due_amount').value = "0.00";
+        }
+
+        function attachCalculationEvents(row) {
+            const fields = ['quantity', 'rate', 'discount-percent', 'vat-percent'];
+            fields.forEach(field => {
+                const input = row.querySelector(`.${field}`);
+                if (input) {
+                    input.addEventListener('input', () => {
+                        calculateItemRow(row);
+                    });
+                }
+            });
+        }
+
+        function populateProductDetails(row, product) {
+            if (selectedProductIds.has(product.id)) {
+                alert(`Product "${product.name}" is already selected.`);
+                row.querySelector('.product-input').value = '';
+                row.querySelector('.product-id').value = '';
+                return false;
+            }
+
+            row.querySelector('.product-input').value = product.name;
+            row.querySelector('.product-id').value = product.id;
+            row.querySelector(`[name$="product_name"]`).value = product.name;
+            row.querySelector('.rate').value = parseFloat(product.salePrice).toFixed(2);
+            row.querySelector('.vat-percent').value = parseFloat(product.vatPercent).toFixed(2);
+            selectedProductIds.add(product.id);
+            calculateItemRow(row);
+            return true;
+        }
+
+        function setupAutocomplete(input) {
+            const container = input.closest('.autocomplete-container');
+            const suggestions = container.querySelector('.suggestions');
+            const productIdInput = container.querySelector('.product-id');
+
+            input.addEventListener('input', () => {
+                const query = input.value.toLowerCase();
+                suggestions.innerHTML = '';
+                productIdInput.value = '';
+                suggestions.style.display = 'none';
+
+                if (query.length < 1) return;
+
+                const matches = products.filter(p => 
+                    p.name.toLowerCase().includes(query) && 
+                    !selectedProductIds.has(p.id)
+                );
+
+                matches.forEach(product => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.textContent = product.name;
+                    div.addEventListener('click', () => {
+                        if (populateProductDetails(input.closest('.item-row'), product)) {
+                            suggestions.style.display = 'none';
+                        }
+                    });
+                    suggestions.appendChild(div);
+                });
+
+                suggestions.style.display = matches.length ? 'block' : 'none';
+            });
+
+            input.addEventListener('blur', () => {
+                setTimeout(() => {
+                    suggestions.style.display = 'none';
+                    if (input.value && !productIdInput.value) {
+                        input.value = '';
+                        alert('Please select a valid product from the suggestions.');
+                    }
+                }, 200);
+            });
+        }
+
+        // Initialize existing rows
+        document.querySelectorAll('#item-formset .item-row').forEach(row => {
+            setupAutocomplete(row.querySelector('.product-input'));
+            attachCalculationEvents(row);
+            
+            const deleteBtn = row.querySelector('.delete-row');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function() {
+                    const productId = row.querySelector('.product-id').value;
+                    if (productId) selectedProductIds.delete(productId);
+                    row.remove();
+                    updateSummary();
+                });
+            }
+            
+            calculateItemRow(row);
+        });
+
+        // Add new item
+        document.getElementById('add-item-btn').addEventListener('click', function() {
+            const tbody = document.getElementById('item-formset');
+            const formIndex = tbody.querySelectorAll('.item-row').length;
+
+            const newRow = document.createElement('tr');
+            newRow.className = 'item-row';
+            newRow.innerHTML = `
+                <td>
+                    <div class="autocomplete-container">
+                        <input type="text" class="product-input" placeholder="Type product name" required>
+                        <input type="hidden" name="items-${formIndex}-product" class="product-id">
+                        <input type="hidden" name="items-${formIndex}-product_name" value="">
+                        <input type="hidden" name="items-${formIndex}-available_quantity" value="0.00">
+                        <div class="suggestions"></div>
+                    </div>
+                </td>
+                <td><input type="number" step="1" name="items-${formIndex}-quantity" class="quantity" value="1" min="1" required></td>
+                <td><input type="number" step="0.01" name="items-${formIndex}-rate" class="rate" value="0.00" min="0" required></td>
+                <td><input type="number" step="0.01" name="items-${formIndex}-discount_percent" class="discount-percent" value="0.00" min="0" max="100"></td>
+                <td><input type="number" step="0.01" name="items-${formIndex}-discount_value" class="discount-value" value="0.00" readonly></td>
+                <td><input type="number" step="0.01" name="items-${formIndex}-vat_percent" class="vat-percent" value="0.00" min="0" max="100"></td>
+                <td><input type="number" step="0.01" name="items-${formIndex}-vat_value" class="vat-value" value="0.00" readonly></td>
+                <td><input type="number" step="0.01" name="items-${formIndex}-total" class="total" value="0.00" readonly></td>
+                <td><button type="button" class="delete-row btn btn-delete">✖</button></td>
+            `;
+            tbody.appendChild(newRow);
+
+            setupAutocomplete(newRow.querySelector('.product-input'));
+            attachCalculationEvents(newRow);
+            
+            newRow.querySelector('.delete-row').addEventListener('click', function() {
+                const productId = newRow.querySelector('.product-id').value;
+                if (productId) selectedProductIds.delete(productId);
+                newRow.remove();
+                updateSummary();
+            });
+        });
+
+        // Sale discount change
+        document.getElementById('sale_discount').addEventListener('input', updateSummary);
+
+        // Form validation
+        document.querySelector('.sale-form').addEventListener('submit', function(e) {
+            const rows = document.querySelectorAll('#item-formset .item-row');
+            let hasValidItem = false;
+            rows.forEach(row => {
+                const productId = row.querySelector('.product-id').value;
+                const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
+                if (productId && quantity > 0) {
+                    hasValidItem = true;
+                }
+            });
+            if (!hasValidItem) {
+                e.preventDefault();
+                alert('Please add at least one valid item with a selected product and positive quantity.');
+            }
+        });
+
+        // Initial calculation
+        updateSummary();
+    </script>
+{% endblock %}

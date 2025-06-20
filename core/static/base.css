@@ -1,0 +1,146 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background-color: #fff;
+  border-bottom: 1px solid lightgray;
+  padding: 1rem 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center; /* Center content inside */
+  align-items: center;
+}
+
+.navbar div {
+  display: flex;
+  gap: 20px;
+}
+
+.navbar a {
+  color: green;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+.navbar a i {
+  margin-right: 12px;
+}
+
+.navbar a:hover {
+  color: darkgreen;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin-top: 53px;
+  padding-top: 60px;
+  min-height: 100%;
+  width: 250px;
+  z-index: 810;
+  background-color: black;
+  color: azure;
+  transition: left 0.3s ease;
+}
+
+.sidebar.collapsed {
+  left: -250px;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 30px;
+}
+
+.sidebar a {
+  color: azure;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+}
+
+.sidebar a i {
+  margin-right: 12px;
+}
+
+.sidebar a:hover {
+  color: lightgreen;
+  background-color: #1a1a1a;
+}
+
+.sidebar .dropdown ul.dropdown-menu {
+  display: none;
+  list-style-type: none;
+  padding-left: 26px;
+  margin: 0;
+}
+
+.sidebar .dropdown.active ul.dropdown-menu {
+  display: block;
+}
+
+.sidebar .dropdown > a {
+  cursor: pointer;
+  position: relative; /* Changed to position arrow absolutely */
+  padding-right: 30px; /* Space for arrow */
+}
+
+.sidebar .dropdown > a i.fa-sort-desc {
+  position: absolute;
+  right: 15px; /* Position arrow on the right */
+  top: 50%;
+  transform: translateY(-50%); /* Center vertically */
+}
+
+/* Toggle button styling */
+.toggle-btn {
+  position: fixed;
+  top: 70px;
+  left: 10px;
+  z-index: 1100;
+  font-size: 20px;
+  cursor: pointer;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.toggle-btn:hover {
+  background-color: #2980b9;
+  transform: scale(1.1);
+}
+
+.toggle-btn:active {
+  transform: scale(0.95);
+}
+
+/* Main content styling for toggle */
+#mainContent {
+  margin-left: 250px;
+  transition: margin-left 0.3s ease;
+}
+
+#mainContent.full-width {
+  margin-left: 0;
+}

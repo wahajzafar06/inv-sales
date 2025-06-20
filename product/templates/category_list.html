@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'category_list.css' %}" />
+{% endblock %}
+
+{% block content %}
+  {% if updated_category %}
+    <div class="alert-success">
+      Category "{{ updated_category.name }}" {% if updated_category.id %}updated{% else %}added{% endif %} successfully.
+    </div>
+  {% endif %}
+  <h2>Category List</h2>
+  <table class="category-table">
+    <thead>
+      <tr>
+        <th>SL.</th>
+        <th>Category Name</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for category in categories %}
+        <tr {% if updated_category and updated_category.id == category.id %}class="highlight"{% endif %}>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ category.name }}</td>
+          <td>{{ category.status }}</td>
+          <td>
+            <a href="{% url 'update_category' category.id %}" class="btn btn-update">Update</a>
+            <form action="{% url 'delete_category' category.id %}" method="POST" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-delete">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4">No categories available.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}

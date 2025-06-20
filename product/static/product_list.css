@@ -1,0 +1,110 @@
+.product-table {
+  width: calc(100% - 30px);
+  margin: 0 15px 30px;
+  border-collapse: collapse;
+}
+
+.product-table th,
+.product-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+/* Column 1: SL. */
+.product-table th:nth-child(1),
+.product-table td:nth-child(1) {
+  width: 20px;
+  text-align: center;
+}
+
+/* Column 2: Barcode */
+.product-table th:nth-child(2),
+.product-table td:nth-child(2) {
+  width: 100px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Column 3: Product Name */
+.product-table th:nth-child(3),
+.product-table td:nth-child(3) {
+  width: 150px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Column 4: Category */
+.product-table th:nth-child(4),
+.product-table td:nth-child(4) {
+  width: 100px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Column 5: Sale Price */
+.product-table th:nth-child(5),
+.product-table td:nth-child(5) {
+  width: 80px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Column 6: Cost Price */
+.product-table th:nth-child(6),
+.product-table td:nth-child(6) {
+  width: 80px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Column 7: Supplier */
+.product-table th:nth-child(7),
+.product-table td:nth-child(7) {
+  width: 100px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Column 8: Unit */
+.product-table th:nth-child(8),
+.product-table td:nth-child(8) {
+  width: 80px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Column 9: Action */
+.product-table th:last-child,
+.product-table td:last-child {
+  width: 10px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.product-table th {
+  background-color: #f4f4f4;
+}
+
+.btn {
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: white;
+}
+
+.btn-update {
+  background-color: #007bff;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  margin-left: 5px;
+  border: none;
+}
+
+h2 { 
+  margin-top: 72px;
+  text-align: center;
+}

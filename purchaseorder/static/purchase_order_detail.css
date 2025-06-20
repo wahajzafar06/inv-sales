@@ -1,0 +1,167 @@
+/* General styling for the main content area */
+.main-content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* Heading styles */
+h2, h3 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+h2 {
+    margin-top: 70px;
+    font-size: 1.8rem;
+}
+
+h3 {
+    font-size: 1.4rem;
+}
+
+/* Purchase header styling */
+.purchase-header {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.purchase-header p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+}
+
+.purchase-header p strong {
+    color: #555;
+    display: inline-block;
+    width: 150px;
+}
+
+/* Messages styling */
+.messages {
+    margin-bottom: 1.5rem;
+}
+
+.alert {
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+/* Table container styling */
+.table-container {
+    overflow-x: auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+/* Table styling */
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.items-table th,
+.items-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.items-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+}
+
+.items-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Discrepancy row styling */
+tr.discrepancy {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+tr.discrepancy:hover {
+    background-color: #ffeba7;
+}
+
+/* Actions styling */
+.actions {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+    margin: 0 0.5rem;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .purchase-header p {
+        font-size: 0.9rem;
+    }
+
+    .purchase-header p strong {
+        width: 120px;
+    }
+
+    .items-table th,
+    .items-table td {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .btn {
+        display: block;
+        margin: 0.5rem auto;
+        width: fit-content;
+    }
+}

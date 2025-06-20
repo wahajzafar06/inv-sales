@@ -1,0 +1,94 @@
+.customer-table {
+  width: calc(100% - 30px);
+  margin: 0 15px 30px;
+  border-collapse: collapse;
+}
+
+.customer-table th,
+.customer-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+/* Column 1: SL. */
+.customer-table th:nth-child(1),
+.customer-table td:nth-child(1) {
+  width: 20px;
+  text-align: center;
+}
+
+/* Column 2: Customer Name */
+.customer-table th:nth-child(2),
+.customer-table td:nth-child(2) {
+  width: 150px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Column 3: Email */
+.customer-table th:nth-child(3),
+.customer-table td:nth-child(3) {
+  width: 150px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Column 4: Phone */
+.customer-table th:nth-child(4),
+.customer-table td:nth-child(4) {
+  width: 100px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Column 5: City */
+.customer-table th:nth-child(5),
+.customer-table td:nth-child(5) {
+  width: 100px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Column 6: Country */
+.customer-table th:nth-child(6),
+.customer-table td:nth-child(6) {
+  width: 100px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Column 7: Action */
+.customer-table th:last-child,
+.customer-table td:last-child {
+  width: 100px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.customer-table th {
+  background-color: #f4f4f4;
+}
+
+.btn {
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: white;
+}
+
+.btn-update {
+  background-color: #007bff;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  margin-left: 5px;
+  border: none;
+}
+
+h2 {
+  margin-top: 72px;
+  text-align: center;
+}

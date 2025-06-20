@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.log
+*.db
+.env
+venv/
+.env/
+.migrations/
+products img/
+
+# IDE settings
+.vscode/
+*.log
+settings.py

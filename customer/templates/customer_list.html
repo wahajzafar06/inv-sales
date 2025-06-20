@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'customer_list.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+  <h2>Customer List</h2>
+  <table class="customer-table">
+    <thead>
+      <tr>
+        <th>SL.</th>
+        <th>Customer Name</th>
+        <th>Phone</th>
+        <th>Address</th>
+        <th>City</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for customer in customers %}
+        <tr {% if updated_customer and updated_customer.id == customer.id %}class="highlight"{% endif %}>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ customer.customer_name }}</td>
+          <td>{{ customer.phone|default:"-" }}</td>
+          <td>{{ customer.address|default:"-" }}</td>
+          <td>{{ customer.city|default:"-" }}</td>
+          <td>
+            <a href="{% url 'update_customer' customer.id %}" class="btn btn-update">Update</a>
+            <form action="{% url 'delete_customer' customer.id %}" method="POST" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-delete">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+          <tr>
+            <td colspan="7">No customers available.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'manage_sale.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <h2>Manage Sales</h2>
+    
+    <div class="filter-container">
+        <div class="date-filter">
+            <label for="fromDate">From</label>
+            <input type="date" id="fromDate">
+            <label for="toDate">To</label>
+            <input type="date" id="toDate">
+            <button onclick="filterByDate()">Find</button>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search..." id="saleSearchInput" onkeyup="filterSaleTable()">
+        </div>
+    </div>
+    <div class="table-wrapper">
+        <table class="sales-table">
+            <thead>
+                <tr>
+                    <th>SL.</th>
+                    <th>Invoice No</th>
+                    <th>Sale By</th>
+                    <th>Customer Name</th>
+                    <th>Date <span class="sort-icon asc" onclick="sortTableByDate()"></span></th>
+                    <th>Total Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="saleTableBody">
+                {% for sale in sales_data %}
+                    <tr {% if updated_sale and updated_sale == sale.id|stringformat:"s" %}class="highlight"{% endif %} data-date="{{ sale.date|date:'Y-m-d' }}">
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ sale.id|default:"-" }}</td>
+                        <td>{{ sale.sale_by|default:"Admin" }}</td>
+                        <td>{{ sale.customer_name|default:"Unknown" }}</td>
+                        <td>{{ sale.date|date:"Y-m-d H:i"|default:"-" }}</td>
+                        <td>{{ sale.net_total|default:"0.00" }}</td>
+                        <td>
+                            <a href="{% url 'sale_detail' sale.id %}" class="btn btn-update"><i class="fa fa-window-maximize" aria-hidden="true"></i></a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7">No sales found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td colspan="5">Total</td>
+                    <td id="totalAmount">0.00</td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<script>
+    let isAscending = true;
+
+    function filterSaleTable() {
+        const input = document.getElementById("saleSearchInput");
+        const filter = input.value.toLowerCase();
+        const rows = document.querySelectorAll("#saleTableBody tr:not(.total-row)");
+        let total = 0;
+
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            const isVisible = text.includes(filter);
+            row.style.display = isVisible ? "" : "none";
+            if (isVisible) {
+                const amount = parseFloat(row.querySelector("td:nth-child(6)").innerText) || 0;
+                total += amount;
+            }
+        });
+
+        document.getElementById("totalAmount").innerText = total.toFixed(2);
+    }
+
+    function sortTableByDate() {
+        const tbody = document.getElementById("saleTableBody");
+        const rows = Array.from(tbody.querySelectorAll("tr:not(.total-row)"));
+        const sortIcon = document.querySelector(".sort-icon");
+
+        rows.sort((a, b) => {
+            const dateA = new Date(a.getAttribute("data-date"));
+            const dateB = new Date(b.getAttribute("data-date"));
+            return isAscending ? dateA - dateB : dateB - dateA;
+        });
+
+        isAscending = !isAscending;
+        sortIcon.className = `sort-icon ${isAscending ? 'asc' : 'desc'}`;
+
+        tbody.innerHTML = "";
+        rows.forEach(row => tbody.appendChild(row));
+        filterSaleTable(); // Recalculate total after sorting
+    }
+
+    function filterByDate() {
+        const fromDate = document.getElementById("fromDate").value;
+        const toDate = document.getElementById("toDate").value;
+        const rows = document.querySelectorAll("#saleTableBody tr:not(.total-row)");
+        let total = 0;
+
+        rows.forEach(row => {
+            const rowDate = row.getAttribute("data-date");
+            const isInRange = (!fromDate || rowDate >= fromDate) && (!toDate || rowDate <= toDate);
+            row.style.display = isInRange ? "" : "none";
+            if (isInRange) {
+                const amount = parseFloat(row.querySelector("td:nth-child(6)").innerText) || 0;
+                total += amount;
+            }
+        });
+
+        document.getElementById("totalAmount").innerText = total.toFixed(2);
+    }
+
+    // Initialize total on page load
+    document.addEventListener("DOMContentLoaded", () => {
+        filterSaleTable();
+    });
+</script>
+{% endblock %}
